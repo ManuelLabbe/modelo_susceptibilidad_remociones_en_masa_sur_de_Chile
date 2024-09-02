@@ -204,3 +204,64 @@ def plot_confusion_matrix(model, X_test, y_test):
     disp.plot()
     plt.title('Matriz de Confusión')
     plt.show()
+    
+    import numpy as np
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report, confusion_matrix
+
+def svm_with_hyperparameter_tuning(X, y, test_size=0.2, random_state=42):
+    """
+    Crea un modelo SVM con ajuste de hiperparámetros.
+
+    Parámetros:
+    X : array-like de forma (n_muestras, n_características)
+        Los datos de entrada.
+    y : array-like de forma (n_muestras,)
+        Las etiquetas objetivo.
+    test_size : float, opcional (por defecto=0.2)
+        La proporción del conjunto de datos a incluir en la división de prueba.
+    random_state : int, opcional (por defecto=42)
+        Controla la aleatoriedad de la división de los datos.
+
+    Retorna:
+    best_model : objeto GridSearchCV
+        El mejor modelo SVM encontrado después del ajuste de hiperparámetros.
+    """
+    # Dividir los datos en conjuntos de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+    # Crear un pipeline con escalado y SVM
+    svm_pipeline = Pipeline([
+        ('scaler', StandardScaler()),
+        ('svm', SVC(random_state=random_state))
+    ])
+
+    # Definir la cuadrícula de parámetros para la búsqueda
+    param_grid = {
+        'svm__C': [0.1, 1, 10, 100],
+        'svm__gamma': ['scale', 'auto', 0.1, 1],
+        'svm__kernel': ['rbf', 'poly', 'sigmoid']
+    }
+
+    # Realizar la búsqueda de cuadrícula con validación cruzada
+    grid_search = GridSearchCV(svm_pipeline, param_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=1)
+    grid_search.fit(X_train, y_train)
+
+    # Obtener el mejor modelo
+    best_model = grid_search.best_estimator_
+
+    # Evaluar el modelo en el conjunto de prueba
+    y_pred = best_model.predict(X_test)
+
+    # Imprimir resultados
+    print("Mejores parámetros encontrados:")
+    print(grid_search.best_params_)
+    print("\nInforme de clasificación:")
+    print(classification_report(y_test, y_pred))
+    print("\nMatriz de confusión:")
+    print(confusion_matrix(y_test, y_pred))
+
+    return best_model

@@ -78,7 +78,7 @@ def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, popu
     hof = tools.HallOfFame(1)
 
     for gen in range(n_generations):
-        offspring = algorithms.varAnd(population, toolbox, cxpb=0.5, mutpb=0.1 + (gen / n_generations) * 0.1)
+        offspring = algorithms.varAnd(population, toolbox, cxpb=0.9, mutpb=0.1 + (gen / n_generations) * 0.1)
         fits = toolbox.map(toolbox.evaluate, offspring)
         for fit, ind in zip(fits, offspring):
             ind.fitness.values = fit
