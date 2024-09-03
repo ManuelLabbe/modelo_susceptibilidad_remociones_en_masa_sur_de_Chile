@@ -212,9 +212,16 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix
 
-def svm_with_hyperparameter_tuning(X, y, test_size=0.2, random_state=42):
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report, confusion_matrix
+from scipy.stats import uniform, randint
+
+def svm_with_hyperparameter_tuning(X, y, test_size=0.2, random_state=42, n_iter=10):
     """
-    Crea un modelo SVM con ajuste de hiperparámetros.
+    Crea un modelo SVM con ajuste de hiperparámetros utilizando búsqueda aleatoria.
 
     Parámetros:
     X : array-like de forma (n_muestras, n_características)
@@ -224,10 +231,12 @@ def svm_with_hyperparameter_tuning(X, y, test_size=0.2, random_state=42):
     test_size : float, opcional (por defecto=0.2)
         La proporción del conjunto de datos a incluir en la división de prueba.
     random_state : int, opcional (por defecto=42)
-        Controla la aleatoriedad de la división de los datos.
+        Controla la aleatoriedad de la división de los datos y la búsqueda.
+    n_iter : int, opcional (por defecto=10)
+        Número de iteraciones para la búsqueda aleatoria.
 
     Retorna:
-    best_model : objeto GridSearchCV
+    best_model : objeto RandomizedSearchCV
         El mejor modelo SVM encontrado después del ajuste de hiperparámetros.
     """
     # Dividir los datos en conjuntos de entrenamiento y prueba
@@ -239,26 +248,35 @@ def svm_with_hyperparameter_tuning(X, y, test_size=0.2, random_state=42):
         ('svm', SVC(random_state=random_state))
     ])
 
-    # Definir la cuadrícula de parámetros para la búsqueda
-    param_grid = {
-        'svm__C': [0.1, 1, 10, 100],
-        'svm__gamma': ['scale', 'auto', 0.1, 1],
+    # Definir la distribución de parámetros para la búsqueda aleatoria
+    param_distributions = {
+        'svm__C': uniform(0.1, 100),
+        'svm__gamma': uniform(0.001, 1),
         'svm__kernel': ['rbf', 'poly', 'sigmoid']
     }
 
-    # Realizar la búsqueda de cuadrícula con validación cruzada
-    grid_search = GridSearchCV(svm_pipeline, param_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=1)
-    grid_search.fit(X_train, y_train)
+    # Realizar la búsqueda aleatoria con validación cruzada
+    random_search = RandomizedSearchCV(
+        svm_pipeline, 
+        param_distributions, 
+        n_iter=n_iter, 
+        cv=5, 
+        scoring='accuracy', 
+        n_jobs=-1, 
+        verbose=1, 
+        random_state=random_state
+    )
+    random_search.fit(X_train, y_train)
 
     # Obtener el mejor modelo
-    best_model = grid_search.best_estimator_
+    best_model = random_search.best_estimator_
 
     # Evaluar el modelo en el conjunto de prueba
     y_pred = best_model.predict(X_test)
 
     # Imprimir resultados
     print("Mejores parámetros encontrados:")
-    print(grid_search.best_params_)
+    print(random_search.best_params_)
     print("\nInforme de clasificación:")
     print(classification_report(y_test, y_pred))
     print("\nMatriz de confusión:")
