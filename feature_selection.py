@@ -48,7 +48,8 @@ def evaluar_cromosoma(individual, X, y, n_caracteristicas):
     penalizacion = len(selected_features) / n_caracteristicas
     
     # Devolver el valor de evaluación
-    return rendimiento + penalizacion,
+    #return rendimiento + penalizacion,
+    return rendimiento
 
 def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, population_size=50):
     X = df.drop(target_column, axis=1)
