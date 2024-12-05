@@ -62,6 +62,7 @@ def xgboost_random_search(X, y, param_grid, test_size=0.2, n_iter=50, random_sta
     acc = accuracy_score(y_true=y_test, y_pred=y_pred)
     print(f'Precisión: {acc*100:.2f}%')
     plot_confusion_matrix(best_model, X_test, y_test)
+    print(classification_report(y_true=y_test, y_pred=y_pred))
     # Retornar los resultados
     return {
         'best_model': best_model,
