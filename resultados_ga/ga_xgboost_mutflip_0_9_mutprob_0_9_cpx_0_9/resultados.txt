@@ -1,0 +1,15 @@
+Features seleccionadas
+PIRange_Sand.15-30cm
+PP
+ksat_100-200cm
+n_5-15cm
+slope
+Bulkd.0-5cm
+n_60-100cm
+Bulkd.60-100cm
+Tex_Class.15-30cm
+PIRange_Bulkd.0-5cm
+Clay.5-15cm
+PIRange_Clay.0-5cm
+valor_humedad_suelo1
+Mejor Fitness: 0.2363492063492063

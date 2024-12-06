@@ -1,0 +1,12 @@
+Features seleccionadas
+PIRange_Sand.0-5cm
+alpha_15-30cm
+PP
+AvMoist.0-5cm
+PWP.100-200cm
+slope
+Tex_Class.5-15cm
+Tex_Class.100-200cm
+FC.0-5cm
+valor_humedad_suelo1
+Mejor Fitness: 0.23174603174603173

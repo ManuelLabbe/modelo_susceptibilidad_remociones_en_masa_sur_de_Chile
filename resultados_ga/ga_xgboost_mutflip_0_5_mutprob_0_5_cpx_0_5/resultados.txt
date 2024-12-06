@@ -1,0 +1,11 @@
+Features seleccionadas
+alpha_5-15cm
+ksat_15-30cm
+PP
+n_15-30cm
+Bulkd.5-15cm
+PIRange_Bulkd.0-5cm
+theta_s_0-5cm
+FC.60-100cm
+valor_humedad_suelo1
+Mejor Fitness: 0.21063492063492065

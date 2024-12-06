@@ -1,0 +1,10 @@
+Features seleccionadas
+PP
+ksat_100-200cm
+AvMoist.60-100cm
+slope
+Tex_Class.15-30cm
+PIRange_Bulkd.5-15cm
+Clay.15-30cm
+valor_humedad_suelo1
+Mejor Fitness: 0.18158730158730158

@@ -75,7 +75,8 @@ def evaluar_cromosoma(individual, X, y, n_caracteristicas):
     
     return rendimiento + penalizacion,
 
-def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, population_size=50, n_processes=None):
+def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, population_size=50, n_processes=None, 
+                                       outputpath = 'path', mutFlipBit=0.9, mut_prob=0.9, cruce_prob=0.9):
     if n_processes is None:
         n_processes = multiprocessing.cpu_count() - 1
     
@@ -83,6 +84,8 @@ def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, popu
     y = df[target_column]
     n_caracteristicas = len(X.columns)
     
+    outputpath = f"{outputpath}/{outputpath.split('/')[-1]}.csv"
+
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMin)
 
@@ -97,7 +100,7 @@ def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, popu
     eval_partial = partial(evaluar_cromosoma, X=X, y=y, n_caracteristicas=n_caracteristicas)
     toolbox.register("evaluate", eval_partial)
     toolbox.register("mate", tools.cxTwoPoint)
-    toolbox.register("mutate", tools.mutFlipBit, indpb=0.3)
+    toolbox.register("mutate", tools.mutFlipBit, indpb=mutFlipBit)
     toolbox.register("select", tools.selTournament, tournsize=3)
 
     population = toolbox.population(n=population_size)
@@ -131,13 +134,13 @@ def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, popu
             
             # Cruzamiento con probabilidad 0.9
             for child1, child2 in zip(offspring[::2], offspring[1::2]):
-                if random.random() < 0.2:
+                if random.random() < cruce_prob:
                     toolbox.mate(child1, child2)
                     del child1.fitness.values
                     del child2.fitness.values
 
             # Mutación con probabilidad que aumenta
-            mutpb = 0.4 + (gen / n_generations) * 0.1
+            mutpb = mut_prob + (gen / n_generations) * 0.1
             for mutant in offspring:
                 if random.random() < mutpb:
                     toolbox.mutate(mutant)
@@ -161,8 +164,8 @@ def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, popu
             generations_df = pd.concat([generations_df, gen_df], ignore_index=True)
             
             # Guardar CSV
-            generations_df.to_csv(f'resultados_generaciones_ga__mutflip_03_mutp_04_cpx_02_xgboost_pen_100.csv', index=False)
-            
+            generations_df.to_csv(outputpath, index=False)
+            print(f'Guardando en {outputpath}')
             # Registrar y mostrar estadísticas
             record = stats.compile(population)
             logbook.record(gen=gen, **record)

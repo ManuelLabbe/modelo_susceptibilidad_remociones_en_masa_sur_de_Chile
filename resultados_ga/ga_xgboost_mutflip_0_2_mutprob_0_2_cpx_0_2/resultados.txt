@@ -1,0 +1,9 @@
+Features seleccionadas
+ksat_60-100cm
+PP
+n_0-5cm
+Bulkd.5-15cm
+FC.0-5cm
+PIRange_Clay.15-30cm
+valor_humedad_suelo1
+Mejor Fitness: 0.17158730158730157

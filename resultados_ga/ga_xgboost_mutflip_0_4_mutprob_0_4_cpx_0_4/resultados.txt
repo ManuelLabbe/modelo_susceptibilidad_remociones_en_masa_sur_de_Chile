@@ -1,0 +1,10 @@
+Features seleccionadas
+alpha_5-15cm
+alpha_15-30cm
+PP
+Tex_Class.5-15cm
+Tex_Class.100-200cm
+theta_s_5-15cm
+FC.60-100cm
+valor_humedad_suelo1
+Mejor Fitness: 0.19904761904761908
