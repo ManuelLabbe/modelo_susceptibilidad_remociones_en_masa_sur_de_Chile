@@ -1,0 +1,9 @@
+Features seleccionadas
+PIRange_Sand.15-30cm
+ksat_15-30cm
+n_0-5cm
+AvMoist.60-100cm
+Tex_Class.5-15cm
+Clay.0-5cm
+Clay.15-30cm
+Mejor Fitness: 0.49629520276579114

@@ -1,0 +1,8 @@
+Features seleccionadas
+alpha_5-15cm
+PIRange_Sand.60-100cm
+PP
+slope
+n_15-30cm
+Clay.0-5cm
+Mejor Fitness: 0.4526055467231937

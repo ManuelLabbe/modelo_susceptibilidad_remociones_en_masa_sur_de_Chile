@@ -1,0 +1,13 @@
+Features seleccionadas
+PIRange_Sand.0-5cm
+PIRange_Sand.15-30cm
+alpha_5-15cm
+ksat_15-30cm
+n_0-5cm
+PWP.100-200cm
+slope
+FC.0-5cm
+PIRange_Clay.5-15cm
+theta_s_60-100cm
+valor_humedad_suelo1
+Mejor Fitness: 0.33575516693163754

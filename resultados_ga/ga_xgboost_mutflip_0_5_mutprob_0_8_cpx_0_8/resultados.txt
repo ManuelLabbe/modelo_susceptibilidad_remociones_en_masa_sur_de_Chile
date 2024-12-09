@@ -1,0 +1,11 @@
+Features seleccionadas
+PIRange_Sand.60-100cm
+PP
+ksat_100-200cm
+Bulkd.5-15cm
+Tex_Class.100-200cm
+theta_s_0-5cm
+Clay.15-30cm
+FC.60-100cm
+valor_humedad_suelo1
+Mejor Fitness: 0.20111111111111116

@@ -5,11 +5,14 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 import numpy as np
-from sklearn.model_selection import cross_val_score
+from sklearn.svm import SVC
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import cross_val_score, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from deap import creator, base, tools, algorithms
 import random
 from functools import partial
+from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import multiprocessing
 
@@ -33,46 +36,48 @@ def cart_feature_selection(df, target_column, n_features=5):
         return selected_features
     
 
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
 def evaluar_cromosoma(individual, X, y, n_caracteristicas):
     # Decodificar el cromosoma
     selected_features = X.columns[np.array(individual, dtype=bool)]
-    
+
     # Verificar restricciones
     if len(selected_features) == 0:
         return 1,  # Penalización máxima
-    
-    # Split data
+
+    # Dividir los datos en entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(
-        X[selected_features], 
-        y, 
-        test_size=0.2, 
+        X[selected_features],
+        y,
+        test_size=0.2,
         random_state=42
     )
-    
-    # Entrenar modelo
-    clf = XGBClassifier(
-        n_estimators=100,
-        random_state=42,
-        eval_metric='logloss',
-        early_stopping_rounds=10,
+
+    # Configurar el modelo Random Forest
+    clf = RandomForestClassifier(
+        n_estimators=300,
+        max_depth=30,
+        random_state=42
     )
-    
-    # Train with early stopping using validation set
-    eval_set = [(X_train, y_train), (X_test, y_test)]
-    clf.fit(
-        X_train, 
-        y_train,
-        eval_set=eval_set,
-        verbose=False
-    )
-    
-    # Evaluar en test
-    accuracy = clf.score(X_test, y_test)
+
+    # Entrenar el modelo
+    clf.fit(X_train, y_train)
+
+    # Predecir en el conjunto de prueba
+    y_pred = clf.predict(X_test)
+
+    # Calcular precisión
+    accuracy = accuracy_score(y_test, y_pred)
+
+    # Calcular rendimiento
     rendimiento = 1 - accuracy
-    
+
     # Penalización por número de características
     penalizacion = len(selected_features) / 100
-    
+
     return rendimiento + penalizacion,
 
 def seleccion_caracteristicas_genetico(df, target_column, n_generations=50, population_size=50, n_processes=None, 

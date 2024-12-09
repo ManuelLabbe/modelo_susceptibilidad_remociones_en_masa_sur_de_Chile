@@ -1,0 +1,9 @@
+Features seleccionadas
+alpha.0-5cm
+PP
+AvMoist.60-100cm
+slope
+n_60-100cm
+Clay.5-15cm
+theta_s_15-30cm
+Mejor Fitness: 0.44323289676230854
