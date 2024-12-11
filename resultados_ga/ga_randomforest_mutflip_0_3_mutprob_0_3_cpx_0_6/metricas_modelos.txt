@@ -1,0 +1,35 @@
+{
+    "RandomForest": {
+        "Sensibilidad": 0.8789144050104384,
+        "Especificidad": 0.8540772532188842,
+        "Precisi\u00f3n": 0.8609406952965235,
+        "Exactitud": 0.8666666666666667,
+        "Mejores Hiperpar\u00e1metros": {
+            "classifier__max_depth": 20,
+            "classifier__min_samples_split": 2,
+            "classifier__n_estimators": 300
+        }
+    },
+    "SVC": {
+        "Sensibilidad": 0.7244258872651357,
+        "Especificidad": 0.6545064377682404,
+        "Precisi\u00f3n": 0.6830708661417323,
+        "Exactitud": 0.68994708994709,
+        "Mejores Hiperpar\u00e1metros": {
+            "classifier__C": 10,
+            "classifier__gamma": "scale",
+            "classifier__kernel": "rbf"
+        }
+    },
+    "XGBoost": {
+        "Sensibilidad": 0.8789144050104384,
+        "Especificidad": 0.8648068669527897,
+        "Precisi\u00f3n": 0.8698347107438017,
+        "Exactitud": 0.8719576719576719,
+        "Mejores Hiperpar\u00e1metros": {
+            "classifier__learning_rate": 0.1,
+            "classifier__max_depth": 15,
+            "classifier__n_estimators": 200
+        }
+    }
+}
