@@ -16,24 +16,115 @@ from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import multiprocessing
 
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.model_selection import train_test_split
+import graphviz
+import pandas as pd
+import re
+
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.model_selection import train_test_split
+import graphviz
+import pandas as pd
+import re
+
 def cart_feature_selection(df, target_column, n_features=5):
-        X = df.drop(target_column, axis=1)
-        y = df[target_column]
-        
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        
-        cart = RandomForestClassifier(random_state=42)
-        #cart = XGBClassifier(random_state=42)
-        cart.fit(X_train, y_train)
-        
-        feature_importance = pd.DataFrame({
-            'feature': X.columns,
-            'importance': cart.feature_importances_
-        }).sort_values('importance', ascending=False)
-        
-        selected_features = feature_importance['feature'][:n_features].tolist()
-        
-        return selected_features
+    X = df.drop(target_column, axis=1)
+    y = df[target_column]
+    
+    # Dividir los datos
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    
+    # Crear y entrenar el árbol de decisión
+    tree = DecisionTreeClassifier(random_state=42)
+    tree.fit(X_train, y_train)
+    
+    # Obtener importancias de características
+    feature_importance = pd.DataFrame({
+        'feature': X.columns,
+        'importance': tree.feature_importances_
+    }).sort_values('importance', ascending=False)
+    
+    selected_features = feature_importance['feature'][:n_features].tolist()
+    
+    # Exportar el árbol a formato DOT
+    dot_data = export_graphviz(
+        tree,
+        max_depth=4,
+        out_file=None,
+        feature_names=X.columns,
+        class_names=None,
+        filled=False,
+        impurity=True,
+        proportion=False,
+        rounded=True,
+        precision=2,
+        label='none'
+    )
+    
+    # Función para reemplazar las etiquetas de los nodos
+    def replace_labels(dot_data):
+        pattern = re.compile(r'label="([^"]+)"')
+        def repl(match):
+            label_content = match.group(1)
+            lines = label_content.split('\\n')
+            new_label_lines = []
+            for line in lines:
+                if '<=' in line or 'gini' in line:
+                    new_label_lines.append(line)
+            new_label = '\\n'.join(new_label_lines)
+            return f'label="{new_label}"'
+        return pattern.sub(repl, dot_data)
+    
+    # Modificar las etiquetas en el DOT data
+    dot_data = replace_labels(dot_data)
+    
+    # Visualizar el árbol
+    graph = graphviz.Source(dot_data)
+    graph.render("decision_tree", format='png', cleanup=True)
+    print("El árbol se ha guardado como 'decision_tree.png'")
+    
+    return selected_features
+    
+    # Exportar el árbol a formato DOT
+    dot_data = export_graphviz(
+        tree,
+        out_file=None,
+        feature_names=X.columns,
+        class_names=None,
+        filled=False,
+        impurity=True,
+        proportion=False,
+        rounded=True,
+        precision=2,
+        label='none'
+    )
+    
+    # Función para reemplazar las etiquetas de los nodos
+    def replace_labels(dot_data):
+        pattern = re.compile(r'label="([^"]+)"')
+        def repl(match):
+            label_content = match.group(1)
+            lines = label_content.split('\\n')
+            new_label_lines = []
+            for line in lines:
+                if '<=' in line or 'gini' in line:
+                    new_label_lines.append(line)
+            new_label = '\\n'.join(new_label_lines)
+            return f'label="{new_label}"'
+        return pattern.sub(repl, dot_data)
+    
+    # Modificar las etiquetas en el DOT data
+    dot_data = replace_labels(dot_data)
+    
+    # Visualizar el árbol
+    graph = graphviz.Source(dot_data)
+    graph.render("decision_tree", format='png', cleanup=True)
+    print("El árbol se ha guardado como 'decision_tree.png'")
+    
+    return selected_features
     
 
 from sklearn.ensemble import RandomForestClassifier
