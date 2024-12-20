@@ -52,7 +52,7 @@ def cart_feature_selection(df, target_column, n_features=5):
     # Exportar el árbol a formato DOT
     dot_data = export_graphviz(
         tree,
-        max_depth=4,
+        max_depth=3,
         out_file=None,
         feature_names=X.columns,
         class_names=None,
@@ -72,20 +72,40 @@ def cart_feature_selection(df, target_column, n_features=5):
             lines = label_content.split('\\n')
             new_label_lines = []
             for line in lines:
-                if '<=' in line or 'gini' in line:
+                if '<=' in line:
+                    # Extraer el nombre de la característica
+                    feature_name = line.split('<=')[0].strip()
+                    # Reemplazar 'valor_humedad_suelo1' por 'VMoist'
+                    if feature_name == 'valor_humedad_suelo1':
+                        feature_name = 'VMoist'
+                    # Reemplazar los valores numéricos de rango por letras
+                    feature_name = re.sub(r'0-5cm', 'a', feature_name)
+                    feature_name = re.sub(r'5-15cm', 'b', feature_name)
+                    feature_name = re.sub(r'15-30cm', 'c', feature_name)
+                    feature_name = re.sub(r'30-60cm', 'd', feature_name)
+                    feature_name = re.sub(r'60-100cm', 'e', feature_name)
+                    feature_name = re.sub(r'100-200cm', 'f', feature_name)
+                    new_label_lines.append(feature_name)
+                elif 'gini' in line:
                     new_label_lines.append(line)
             new_label = '\\n'.join(new_label_lines)
             return f'label="{new_label}"'
         return pattern.sub(repl, dot_data)
-    
+
     # Modificar las etiquetas en el DOT data
     dot_data = replace_labels(dot_data)
-    
+
     # Visualizar el árbol
     graph = graphviz.Source(dot_data)
     graph.render("decision_tree", format='png', cleanup=True)
     print("El árbol se ha guardado como 'decision_tree.png'")
-    
+
+    y_pred = tree.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    error = 1 - accuracy
+
+    print(f"Precisión del modelo: {accuracy:.4f}")
+    print(f"Error del modelo (1 - precisión): {error:.4f}")
     return selected_features
     
     # Exportar el árbol a formato DOT
