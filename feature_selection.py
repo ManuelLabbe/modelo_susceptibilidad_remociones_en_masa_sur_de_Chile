@@ -28,7 +28,26 @@ import graphviz
 import pandas as pd
 import re
 
-def cart_feature_selection(df, target_column, n_features=5):
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.metrics import accuracy_score
+import pandas as pd
+import graphviz
+import re
+import numpy as np
+from scipy import stats
+
+def cart_feature_selection(df, target_column, n_features=5, n_cv_folds=5):
+    """
+    Realiza selección de características usando CART con ajuste de hiperparámetros
+    y cálculo de intervalos de confianza para el error.
+    
+    Args:
+        df: DataFrame con los datos
+        target_column: Nombre de la columna objetivo
+        n_features: Número de características a seleccionar
+        n_cv_folds: Número de folds para validación cruzada
+    """
     X = df.drop(target_column, axis=1)
     y = df[target_column]
     
@@ -37,21 +56,47 @@ def cart_feature_selection(df, target_column, n_features=5):
         X, y, test_size=0.2, random_state=42
     )
     
-    # Crear y entrenar el árbol de decisión
-    tree = DecisionTreeClassifier(random_state=42)
-    tree.fit(X_train, y_train)
+    # Grid de hiperparámetros extendido
+    param_grid = {
+        'max_depth': [3, 4, 5, 6, 7, 8, 10, 12, 15, None],
+        'min_samples_split': [2, 3, 4, 5, 7, 10, 15, 20],
+        'min_samples_leaf': [1, 2, 3, 4, 5, 7, 10],
+        'max_features': ['sqrt', 'log2', None],
+        'class_weight': ['balanced', None],
+        'min_weight_fraction_leaf': [0.0, 0.1, 0.2, 0.3],
+        'min_impurity_decrease': [0.0, 0.01, 0.05, 0.1],
+    }
+    
+    # Crear el modelo base
+    base_tree = DecisionTreeClassifier(random_state=42)
+    
+    # Realizar búsqueda de grid con validación cruzada
+    grid_search = GridSearchCV(
+        estimator=base_tree,
+        param_grid=param_grid,
+        cv=n_cv_folds,
+        scoring='accuracy',
+        n_jobs=-1,
+        verbose=1
+    )
+    
+    # Ajustar el modelo
+    grid_search.fit(X_train, y_train)
+    
+    # Obtener el mejor modelo
+    best_tree = grid_search.best_estimator_
     
     # Obtener importancias de características
     feature_importance = pd.DataFrame({
         'feature': X.columns,
-        'importance': tree.feature_importances_
+        'importance': best_tree.feature_importances_
     }).sort_values('importance', ascending=False)
     
     selected_features = feature_importance['feature'][:n_features].tolist()
     
     # Exportar el árbol a formato DOT
     dot_data = export_graphviz(
-        tree,
+        best_tree,
         max_depth=3,
         out_file=None,
         feature_names=X.columns,
@@ -73,12 +118,9 @@ def cart_feature_selection(df, target_column, n_features=5):
             new_label_lines = []
             for line in lines:
                 if '<=' in line:
-                    # Extraer el nombre de la característica
                     feature_name = line.split('<=')[0].strip()
-                    # Reemplazar 'valor_humedad_suelo1' por 'VMoist'
                     if feature_name == 'valor_humedad_suelo1':
                         feature_name = 'VMoist'
-                    # Reemplazar los valores numéricos de rango por letras
                     feature_name = re.sub(r'0-5cm', 'a', feature_name)
                     feature_name = re.sub(r'5-15cm', 'b', feature_name)
                     feature_name = re.sub(r'15-30cm', 'c', feature_name)
@@ -98,53 +140,38 @@ def cart_feature_selection(df, target_column, n_features=5):
     # Visualizar el árbol
     graph = graphviz.Source(dot_data)
     graph.render("decision_tree", format='png', cleanup=True)
-    print("El árbol se ha guardado como 'decision_tree.png'")
-
-    y_pred = tree.predict(X_test)
+    
+    # Calcular predicciones y métricas
+    y_pred = best_tree.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     error = 1 - accuracy
-
-    print(f"Precisión del modelo: {accuracy:.4f}")
-    print(f"Error del modelo (1 - precisión): {error:.4f}")
-    return selected_features
     
-    # Exportar el árbol a formato DOT
-    dot_data = export_graphviz(
-        tree,
-        out_file=None,
-        feature_names=X.columns,
-        class_names=None,
-        filled=False,
-        impurity=True,
-        proportion=False,
-        rounded=True,
-        precision=2,
-        label='none'
-    )
+    # Calcular margen de error (95%)
+    n = len(y_test)
+    confidence = 0.95
+    z = stats.norm.ppf((1 + confidence) / 2)
     
-    # Función para reemplazar las etiquetas de los nodos
-    def replace_labels(dot_data):
-        pattern = re.compile(r'label="([^"]+)"')
-        def repl(match):
-            label_content = match.group(1)
-            lines = label_content.split('\\n')
-            new_label_lines = []
-            for line in lines:
-                if '<=' in line or 'gini' in line:
-                    new_label_lines.append(line)
-            new_label = '\\n'.join(new_label_lines)
-            return f'label="{new_label}"'
-        return pattern.sub(repl, dot_data)
+    # Método de Wilson para el margen de error
+    denominador = 1 + (z**2 / n)
+    centro = (error + z**2 / (2*n)) / denominador
+    margen = z * np.sqrt((error * (1 - error) + z**2 / (4*n)) / n) / denominador
     
-    # Modificar las etiquetas en el DOT data
-    dot_data = replace_labels(dot_data)
+    # Imprimir resultados
+    print("\nResultados del modelo:")
+    print(f"Mejores hiperparámetros encontrados:")
+    for param, value in grid_search.best_params_.items():
+        print(f"- {param}: {value}")
+    print(f"\nPrecisión del modelo: {accuracy:.4f}")
+    print(f"Error del modelo: {error:.4f} ± {margen:.4f}")
     
-    # Visualizar el árbol
-    graph = graphviz.Source(dot_data)
-    graph.render("decision_tree", format='png', cleanup=True)
-    print("El árbol se ha guardado como 'decision_tree.png'")
-    
-    return selected_features
+    return {
+        'selected_features': selected_features,
+        'best_params': grid_search.best_params_,
+        'accuracy': accuracy,
+        'error': error,
+        'error_margin': margen,
+        'model': best_tree
+    }
     
 
 from sklearn.ensemble import RandomForestClassifier
@@ -187,7 +214,7 @@ def evaluar_cromosoma(individual, X, y, n_caracteristicas):
     rendimiento = 1 - accuracy
 
     # Penalización por número de características
-    penalizacion = len(selected_features) / 100
+    penalizacion = len(selected_features) / len(X.columns)
 
     return rendimiento + penalizacion,
 

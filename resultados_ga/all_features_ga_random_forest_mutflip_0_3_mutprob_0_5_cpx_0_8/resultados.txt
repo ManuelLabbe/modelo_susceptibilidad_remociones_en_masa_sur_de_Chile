@@ -1,0 +1,21 @@
+Features seleccionadas
+PIRange_Bulkd.100-200cm
+PIRange_Bulkd.5-15cm
+PIRange_Sand.0-5cm
+alpha_15-30cm
+AvMoist.0-5cm
+ksat_15-30cm
+ksat_60-100cm
+n_30-60cm
+n_5-15cm
+PWP.15-30cm
+PWP.30-60cm
+alpha.0-5cm
+ksat.60-100cm
+n.60-100cm
+theta_s.60-100cm
+Sand.100-200cm
+Silt.60-100cm
+PP
+valor_humedad_suelo1
+Mejor Fitness: 0.32809523809523805
