@@ -1,0 +1,31 @@
+Features seleccionadas
+PIRange_Bulkd.100-200cm
+PIRange_Bulkd.30-60cm
+PIRange_Clay.0-5cm
+PIRange_Sand.100-200cm
+PIRange_Sand.15-30cm
+AvMoist.0-5cm
+AvMoist.100-200cm
+AWC_30-60cm
+FC.100-200cm
+FC.60-100cm
+ksat_100-200cm
+ksat_30-60cm
+ksat_5-15cm
+n_0-5cm
+n_60-100cm
+theta_r_30-60cm
+alpha.100-200cm
+alpha.60-100cm
+ksat.15-30cm
+n.5-15cm
+theta_r.0-5cm
+theta_s.60-100cm
+Clay.0-5cm
+Clay.15-30cm
+Sand.5-15cm
+Silt.0-5cm
+Tex_Class.100-200cm
+valor_humedad_suelo1
+slope
+Mejor Fitness: 0.5788888888888888

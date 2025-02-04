@@ -1,0 +1,49 @@
+{
+    "RandomForest": {
+        "Sensibilidad": 0.8559498956158664,
+        "Especificidad": 0.8068669527896996,
+        "Precisi\u00f3n": 0.82,
+        "Exactitud": 0.8317460317460318,
+        "Mejores Hiperpar\u00e1metros": {
+            "classifier__bootstrap": true,
+            "classifier__max_depth": 15,
+            "classifier__max_features": null,
+            "classifier__max_leaf_nodes": 200,
+            "classifier__min_impurity_decrease": 0.0,
+            "classifier__min_samples_leaf": 1,
+            "classifier__min_samples_split": 5,
+            "classifier__min_weight_fraction_leaf": 0.0,
+            "classifier__n_estimators": 500,
+            "classifier__n_jobs": -1,
+            "classifier__random_state": 42
+        }
+    },
+    "SVC": {
+        "Sensibilidad": 0.7933194154488518,
+        "Especificidad": 0.7532188841201717,
+        "Precisi\u00f3n": 0.7676767676767676,
+        "Exactitud": 0.7735449735449735,
+        "Mejores Hiperpar\u00e1metros": {
+            "classifier__C": 2,
+            "classifier__gamma": 0.1,
+            "classifier__kernel": "rbf",
+            "classifier__random_state": 42
+        }
+    },
+    "XGBoost": {
+        "Sensibilidad": 0.8830897703549061,
+        "Especificidad": 0.8347639484978541,
+        "Precisi\u00f3n": 0.846,
+        "Exactitud": 0.8592592592592593,
+        "Mejores Hiperpar\u00e1metros": {
+            "classifier__gamma": 0,
+            "classifier__learning_rate": 0.15,
+            "classifier__max_depth": 5,
+            "classifier__min_child_weight": 1,
+            "classifier__n_estimators": 300,
+            "classifier__random_state": 42,
+            "classifier__reg_alpha": 0.5,
+            "classifier__reg_lambda": 1.0
+        }
+    }
+}

@@ -56,24 +56,13 @@ def cart_feature_selection(df, target_column, n_features=5, n_cv_folds=5):
         X, y, test_size=0.2, random_state=42
     )
     
-    # Grid de hiperparámetros extendido
-    param_grid = {
-        'max_depth': [3, 4, 5, 6, 7, 8, 10, 12, 15, None],
-        'min_samples_split': [2, 3, 4, 5, 7, 10, 15, 20],
-        'min_samples_leaf': [1, 2, 3, 4, 5, 7, 10],
-        'max_features': ['sqrt', 'log2', None],
-        'class_weight': ['balanced', None],
-        'min_weight_fraction_leaf': [0.0, 0.1, 0.2, 0.3],
-        'min_impurity_decrease': [0.0, 0.01, 0.05, 0.1],
-    }
-    
     # Crear el modelo base
-    base_tree = DecisionTreeClassifier(random_state=42)
+    base_tree = SVC(random_state=42)
     
     # Realizar búsqueda de grid con validación cruzada
     grid_search = GridSearchCV(
         estimator=base_tree,
-        param_grid=param_grid,
+        #param_grid=param_grid,
         cv=n_cv_folds,
         scoring='accuracy',
         n_jobs=-1,
@@ -193,11 +182,11 @@ def evaluar_cromosoma(individual, X, y, n_caracteristicas):
         test_size=0.2,
         random_state=42
     )
-
+    scaler = MinMaxScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
     # Configurar el modelo Random Forest
-    clf = RandomForestClassifier(
-        n_estimators=300,
-        max_depth=30,
+    clf = SVC(
         random_state=42
     )
 
@@ -214,7 +203,7 @@ def evaluar_cromosoma(individual, X, y, n_caracteristicas):
     rendimiento = 1 - accuracy
 
     # Penalización por número de características
-    penalizacion = len(selected_features) / len(X.columns)
+    penalizacion = len(selected_features) / 100
 
     return rendimiento + penalizacion,
 

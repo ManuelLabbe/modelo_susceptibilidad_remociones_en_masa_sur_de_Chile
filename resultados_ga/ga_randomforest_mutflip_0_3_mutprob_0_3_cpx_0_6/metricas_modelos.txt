@@ -1,35 +1,49 @@
 {
     "RandomForest": {
-        "Sensibilidad": 0.8789144050104384,
-        "Especificidad": 0.8540772532188842,
-        "Precisi\u00f3n": 0.8609406952965235,
-        "Exactitud": 0.8666666666666667,
+        "Sensibilidad": 0.9018789144050104,
+        "Especificidad": 0.8562231759656652,
+        "Precisi\u00f3n": 0.8657314629258517,
+        "Exactitud": 0.8793650793650793,
         "Mejores Hiperpar\u00e1metros": {
-            "classifier__max_depth": 20,
+            "classifier__bootstrap": false,
+            "classifier__max_depth": null,
+            "classifier__max_features": "sqrt",
+            "classifier__max_leaf_nodes": null,
+            "classifier__min_impurity_decrease": 0.0,
+            "classifier__min_samples_leaf": 1,
             "classifier__min_samples_split": 2,
-            "classifier__n_estimators": 300
+            "classifier__min_weight_fraction_leaf": 0.0,
+            "classifier__n_estimators": 500,
+            "classifier__n_jobs": -1,
+            "classifier__random_state": 42
         }
     },
     "SVC": {
-        "Sensibilidad": 0.7244258872651357,
-        "Especificidad": 0.6545064377682404,
-        "Precisi\u00f3n": 0.6830708661417323,
-        "Exactitud": 0.68994708994709,
+        "Sensibilidad": 0.7494780793319415,
+        "Especificidad": 0.721030042918455,
+        "Precisi\u00f3n": 0.7341513292433538,
+        "Exactitud": 0.7354497354497355,
         "Mejores Hiperpar\u00e1metros": {
-            "classifier__C": 10,
-            "classifier__gamma": "scale",
-            "classifier__kernel": "rbf"
+            "classifier__C": 2,
+            "classifier__gamma": 1,
+            "classifier__kernel": "rbf",
+            "classifier__random_state": 42
         }
     },
     "XGBoost": {
-        "Sensibilidad": 0.8789144050104384,
-        "Especificidad": 0.8648068669527897,
-        "Precisi\u00f3n": 0.8698347107438017,
-        "Exactitud": 0.8719576719576719,
+        "Sensibilidad": 0.8851774530271399,
+        "Especificidad": 0.8605150214592274,
+        "Precisi\u00f3n": 0.8670756646216768,
+        "Exactitud": 0.873015873015873,
         "Mejores Hiperpar\u00e1metros": {
-            "classifier__learning_rate": 0.1,
-            "classifier__max_depth": 15,
-            "classifier__n_estimators": 200
+            "classifier__gamma": 0,
+            "classifier__learning_rate": 0.2,
+            "classifier__max_depth": 9,
+            "classifier__min_child_weight": 1,
+            "classifier__n_estimators": 200,
+            "classifier__random_state": 42,
+            "classifier__reg_alpha": 0,
+            "classifier__reg_lambda": 1.0
         }
     }
 }
